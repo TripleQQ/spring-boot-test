@@ -7,8 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -17,13 +17,24 @@ public class UserDetailsImpl implements UserDetails {
     private long id;
     private String username;
     private String email;
+    private String password;
     private Collection<? extends GrantedAuthority> roles;
+
+
+    public UserDetailsImpl(long id,String name,String email,String password, List<GrantedAuthority> roles){
+        this.id=id;
+        this.username=name;
+        this.email=email;
+        this.roles=roles;
+        this.password=password;
+
+    }
 
     public static UserDetailsImpl build(User user){
         List<GrantedAuthority> roles=user.getRoleList().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
-        return new UserDetailsImpl(user.getId())
+        return new UserDetailsImpl(user.getUserId(),user.getUserName(),user.getEmail(),user.getPassword(),roles);
 
 
 
@@ -31,36 +42,46 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        UserDetailsImpl user = (UserDetailsImpl) o;
+        return Objects.equals(id, user.id);
     }
 }
