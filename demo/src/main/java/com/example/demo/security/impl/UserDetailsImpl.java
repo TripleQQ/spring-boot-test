@@ -34,7 +34,7 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> roles=user.getRoleList().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
-        return new UserDetailsImpl(user.getUserId(),user.getUserName(),user.getEmail(),user.getPassword(),roles);
+        return new UserDetailsImpl(user.getUserId(),user.getUsername(),user.getEmail(),user.getPassword(),roles);
 
 
 
@@ -47,6 +47,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
+        System.out.println("Password"+this.password);
         return this.password;
     }
 

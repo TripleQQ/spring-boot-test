@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserByName(String userName) {
-        Optional<User> userOption= userRepository.findByUserName(userName);
+        Optional<User> userOption= userRepository.findByUsername(userName);
         if(userOption.isPresent()) return userOption.get();
         return null;
     }

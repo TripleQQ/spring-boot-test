@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("auth/")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class LoginController {
-
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -31,6 +30,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDetailDto authRequest) {
+
+        System.out.println("************"+authRequest.getName()+",->"+authRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getName(), authRequest.getPassword())
         );
@@ -42,8 +43,16 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        try{
+            System.out.println("name:"+user.getUsername()+", Email"+user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return  ResponseEntity.ok().body("User registered successfully!");
+            return  ResponseEntity.ok().body("User registered successfully!");
+        }catch (Exception e){
+            System.out.println("Error happen"+e.getMessage());
+            return  ResponseEntity.status(400).body("This is error due to "+e.getMessage());
+
+        }
+
     }
 }
